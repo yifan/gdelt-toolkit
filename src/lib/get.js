@@ -77,12 +77,13 @@ const getRemoteResource = (file, baseURL) => {
 };
 
 
-exports.getFile = (datetime, cachePath = defaultCachePath) => {
+exports.getFile = (datetime, cachePath = defaultCachePath, translation = false) => {
   const outStream = through.obj();
+  const extension = translation ? '.translation.export.CSV.zip' : '.export.CSV.zip';
 
   (cachePath ?
-    getCachedResource(`${parseDateTime(datetime)}.translation.export.CSV.zip`, BASE_URL, cachePath) :
-    getRemoteResource(`${parseDateTime(datetime)}.translation.export.CSV.zip`, BASE_URL)
+    getCachedResource(`${parseDateTime(datetime)}${extension}`, BASE_URL, cachePath) :
+    getRemoteResource(`${parseDateTime(datetime)}${extension}`, BASE_URL)
   )
     .pipe(unzipper.Parse())
     .pipe(through.obj((entry, enc, next) =>
@@ -96,10 +97,10 @@ exports.getFile = (datetime, cachePath = defaultCachePath) => {
 };
 
 
-exports.getFileList = (cachePath = defaultCachePath) => (
+exports.getFileList = (cachePath = defaultCachePath, translation = false) => (
   (cachePath ?
-    getCachedResource('masterfilelist-translation.txt', BASE_URL, cachePath) :
-    getRemoteResource('masterfilelist-translation.txt', BASE_URL)
+    getCachedResource(translation ? 'masterfilelist-translation.txt' : 'masterfilelist.txt', BASE_URL, cachePath) :
+    getRemoteResource(translation ? 'masterfilelist-translation.txt' : 'masterfilelist.txt', BASE_URL)
   )
     .pipe(split())
     .pipe(through.obj((chunk, enc, next) => {

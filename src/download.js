@@ -22,13 +22,14 @@ module.exports = ({
   format,
   datetime = defaultDatetime(),
   cachePath = defaultCachePath,
+  translation = false,
 }) => {
   if (format === 'json') {
-    return getFile(datetime, cachePath)
+    return getFile(datetime, cachePath, translation)
       .pipe(entry2JSON(jsonTransform))
       .pipe(JSONStream.stringify('[', ',\n', ']', 2));
   } else if (format === 'n3') {
-    return getFile(datetime, cachePath)
+    return getFile(datetime, cachePath, translation)
       .pipe(entry2JSON())
       .pipe(json2Triple(tripleTransform, 'gdelt:Event'))
       .pipe(new StreamWriter({ prefixes }));
